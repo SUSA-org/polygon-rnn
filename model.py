@@ -15,6 +15,7 @@ model = models.vgg16(pretrained=True)
 model.features
 # model=nn.Sequential(*list(model.features.children())[:-1])
 print(model)
+
 class Model(nn.Module):
     def __init__(self,pretrainedModel):
         super(Model, self).__init__()
