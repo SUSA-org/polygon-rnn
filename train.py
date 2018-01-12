@@ -13,6 +13,7 @@ have_cuda = torch.cuda.is_available()
 epochs = 5
 
 transform = transforms.Compose([
+    transforms.Rescale(256),
     transforms.RandomCrop(224),
     transforms.RandomHorizontalFlip(),
     transforms.ToTensor()
@@ -27,6 +28,8 @@ train_loader = torch.utils.data.DataLoader(train_set, batch_size=32, shuffle=Tru
 vgg = models.vgg16(pretrained=True)
 vgg = nn.Sequential(*list(vgg.features.children())[:-1])
 model = PolygonRNN(vgg)
+if have_cuda:
+    model.cuda()
 
 
 

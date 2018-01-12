@@ -14,7 +14,7 @@ from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.functional as F
 import pdb
-
+from convlstm import ConvLSTM
 #pool 2:   56 x 56 x 128
 #pool 3:   28 x 28 x 256
 #conv4_3:  28 x 28 x 512
@@ -57,6 +57,14 @@ class PolygonRNN(nn.Module):
 
         #Fused VGG BLock 28 x 28 x 512
         self.convFused = nn.Conv2d(512, 128, kernel_size=3,stride=1,padding=1) # 28 x 28 x 128
+
+        self.ConvLSTM = ConvLSTM(input_size=(224,224),
+                                input_dim=128,
+                                hidden_dim=[16,1],
+                                kernel_size=(3,3),
+                                num_layers=2,
+                                bias=True,
+                                batch_first=True)
     def forward(self, x):
         VGGOutput = self.VGG.forward(x)
 
@@ -75,4 +83,7 @@ class PolygonRNN(nn.Module):
         #merged VGG block 28 x 28 x 512
         fused = torch.cat((block1,block2,block3,block4),1) #dimension of channel each is 128
         fused = self.convFused(fused)
-        return fused
+
+        output = self.ConvLSTM(fused)
+        #Insert RNN LSTM here
+        return output
