@@ -20,10 +20,19 @@ import pdb
 #conv4_3:  28 x 28 x 512
 #conv5_3:  14 x 14 x 512
 #indices: 9,16,22,29
+if torch.cuda.is_available():
+    torch.set_default_tensor_type('torch.cuda.FloatTensor')
+    cudaTensor = True
+else:
+    torch.set_default_tensor_type('torch.FloatTensor')
+    cudaTensor = False
+
 class TruncatedVGG(nn.Module):
     def __init__(self,pretrainedModel,indices=[9,16,22,29]):
         super(TruncatedVGG, self).__init__()
         self.model = pretrainedModel
+        if cudaTensor:
+            self.model.cuda()
         self.indices = indices
 
     def forward(self, x):

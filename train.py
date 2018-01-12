@@ -46,8 +46,7 @@ def train(epoch):
         if i==1:
 
             original_img = data[0].float()
-            scale_img = data[0].float()
-            original_img, scale_img = Variable(original_img, volatile=True), Variable(scale_img)
+            original_img = Variable(original_img, volatile=True).cuda()
 
             output = model(original_img)
             i=2
