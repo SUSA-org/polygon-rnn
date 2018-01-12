@@ -2,7 +2,7 @@ import torch.nn as nn
 from torch.autograd import Variable
 import torch
 
-
+have_cuda = torch.cuda.is_available()
 class ConvLSTMCell(nn.Module):
 
     def __init__(self, input_size, input_dim, hidden_dim, kernel_size, bias):
@@ -58,8 +58,12 @@ class ConvLSTMCell(nn.Module):
         return h_next, c_next
 
     def init_hidden(self, batch_size):
-        return (Variable(torch.zeros(batch_size, self.hidden_dim, self.height, self.width)).cuda(),
+        if have_cuda:
+            return (Variable(torch.zeros(batch_size, self.hidden_dim, self.height, self.width)).cuda(),
                 Variable(torch.zeros(batch_size, self.hidden_dim, self.height, self.width)).cuda())
+        else:
+            return (Variable(torch.zeros(batch_size, self.hidden_dim, self.height, self.width)),
+                Variable(torch.zeros(batch_size, self.hidden_dim, self.height, self.width)))
 
 
 class ConvLSTM(nn.Module):

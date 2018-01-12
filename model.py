@@ -59,7 +59,7 @@ class PolygonRNN(nn.Module):
         #Fused VGG BLock 28 x 28 x 512
         self.convFused = nn.Conv2d(512, 128, kernel_size=3,stride=1,padding=1) # 28 x 28 x 128
 
-        self.ConvLSTM = ConvLSTM(input_size=(224,224),
+        self.ConvLSTM = ConvLSTM(input_size=(28,28),
                                 input_dim=128,
                                 hidden_dim=[16,1],
                                 kernel_size=(3,3),
@@ -84,7 +84,8 @@ class PolygonRNN(nn.Module):
         #merged VGG block 28 x 28 x 512
         fused = torch.cat((block1,block2,block3,block4),1) #dimension of channel each is 128
         fused = self.convFused(fused)
-
+        fused = fused.unsqueeze(0)
+        #pdb.set_trace()
         output = self.ConvLSTM(fused)
         #Insert RNN LSTM here
         return output

@@ -1,3 +1,7 @@
+# Patrick Chao and Noah Gundotra
+# 1/11/18
+
+
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
@@ -26,17 +30,18 @@ In the paper there are 3 transforms listed:
 We may have to use the Lambda transforms
 """
 transform = transforms.Compose([
-    transforms.Rescale(256),
+    #transforms.Rescale(256),
     transforms.RandomCrop(224),
     transforms.RandomHorizontalFlip(),
     transforms.ToTensor()
 ])
-
-image_dir="../leftImg8bit/train"
+image_dir="../val"
+#image_dir="../leftImg8bit/train"
 train_set = torchvision.datasets.ImageFolder(image_dir,transform)
 train_set_size = len(train_set)
 
-val_dir = '.../leftImg8bit/val'
+val_dir="../val"
+#val_dir = '.../leftImg8bit/val'
 val_set = torchvision.datasets.ImageFolder(val_dir,transform)
 val_set_size = len(val_set)
 
@@ -50,9 +55,6 @@ model = PolygonRNN(vgg)
 if have_cuda:
     model.cuda()
 
-if have_cuda:
-    model.cuda()
-
 elapsed = time.time() - starttime
 print("About to train! Time elapsed: {}".format(elapsed))
 
@@ -63,7 +65,10 @@ def train(epoch):
 
     for _, data in tqdm(enumerate(train_loader)):
         original_img = data[0].float()
-        original_img = Variable(original_img, volatile=True).cuda()
+        if have_cuda:
+            original_img = Variable(original_img, volatile=True).cuda()
+        else:
+            original_img = Variable(original_img, volatile=True)
         output = model(original_img)
 
 # Train Process Pt.2/2
