@@ -16,6 +16,7 @@ starttime = time.time()
 have_cuda = torch.cuda.is_available()
 epochs = 5
 
+# Creating Datasets
 transform = transforms.Compose([
     transforms.RandomCrop(224),
     transforms.RandomHorizontalFlip(),
@@ -26,17 +27,25 @@ image_dir="../leftImg8bit/train"
 train_set = torchvision.datasets.ImageFolder(image_dir,transform)
 train_set_size = len(train_set)
 
-train_loader = torch.utils.data.DataLoader(train_set, batch_size=32, shuffle=True, num_workers=1)
+val_dir = '.../leftImg8bit/val'
+val_set = torchvision.datasets.ImageFolder(val_dir,transform)
+val_set_size = len(val_set)
 
+train_loader = torch.utils.data.DataLoader(train_set, batch_size=32, shuffle=True, num_workers=1)
+val_loader = torch.utils.data.DataLoader(val_set, batch_size=8, shuffle=True, num_workers=1)
+
+# Initializing Model
 vgg = models.vgg16(pretrained=True)
 vgg = nn.Sequential(*list(vgg.features.children())[:-1])
 model = PolygonRNN(vgg)
+
 if have_cuda:
     model.cuda()
 
 elapsed = time.time() - starttime
 print("About to train! Time elapsed: {}".format(elapsed))
 
+# Train Process Pt.1/2
 def train(epoch):
     print("Training process has started")
     model.eval()
@@ -56,6 +65,7 @@ def train(epoch):
         # color_name = './colorimg/'+str(i)+'.jpg'
         # save_image(sprite_img, color_name)
         # i += 1
+# Train Process Pt.2/2
 for epoch in range(1, epochs + 1):
     print("Epoch: {}".format(epoch))
     train(epoch)
