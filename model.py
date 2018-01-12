@@ -9,8 +9,12 @@ import matplotlib.pyplot as plt
 from torch.autograd import Variable
 import torch.nn as nn
 import torch.nn.functional as F
+import pdb
 
-
+model = models.vgg16(pretrained=True)
+model.features
+# model=nn.Sequential(*list(model.features.children())[:-1])
+print(model)
 #pool 2:   56 x 56 x 128
 #pool 3:   28 x 28 x 256
 #conv4_3:  28 x 28 x 512
@@ -22,7 +26,7 @@ class Model(nn.Module):
         self.model = pretrainedModel
         self.indices = indices
 
-    def forward(self, x):
+    def forward(self, x,indices):
         output=[]
         for i in range(len(self.model)):
             x=self.model[i](x)
