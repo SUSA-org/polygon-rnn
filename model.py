@@ -48,21 +48,23 @@ class PolygonRNN(nn.Module):
         #Second VGG block 28 x 28 x 256
         self.conv2 = nn.Conv2d(256, 128, kernel_size=3,stride=1,padding=1) #28 x 28 x 128
 
-        #Third VGG block 28 x 28 x 256
-        self.conv3 = nn.Conv2d(256, 128, kernel_size=3,stride=1,padding=1) #28 x 28 x 128
+        #Third VGG block 28 x 28 x 512
+        self.conv3 = nn.Conv2d(512, 128, kernel_size=3,stride=1,padding=1) #28 x 28 x 128
 
         #Fourth VGG block 14 x 14 x 512
         self.conv4 = nn.Conv2d(512, 128, kernel_size=3,stride=1,padding=1) #14 x 14 x 128
-        self.up4 = nn.Upsample(scale_factor=2, mode='nearest') # 28 x 28 x 128
+        self.up4 = nn.Upsample(scale_factor=2, mode='bilinear') # 28 x 28 x 128
 
+        #Fused VGG BLock 28 x 28 x 512
+        self.convFused = nn.Conv2d(512, 128, kernel_size=3,stride=1,padding=1) # 28 x 28 x 128
     def forward(self, x):
         VGGOutput = self.VGG.forward(x)
-        pdb.set_trace()
+
         block1 = VGGOutput[0]
-        block1 = self.conv1(self.mp1(block1))
+        block1 = self.conv1(self.mp1(block1)) #28 x 28 x 128
 
         block2 = VGGOutput[1]
-        block2 = self.conv2(block2)
+        block2 = self.conv2(block2) #28 x 28 x 128
 
         block3 = VGGOutput[2]
         block3 = self.conv3(block3)
@@ -71,5 +73,6 @@ class PolygonRNN(nn.Module):
         block4 = self.up4(self.conv4(block4))
 
         #merged VGG block 28 x 28 x 512
-        fused = torch.cat((block1,block2,block3,block4),0)
+        fused = torch.cat((block1,block2,block3,block4),1) #dimension of channel each is 128
+        fused = self.convFused(fused)
         return fused
