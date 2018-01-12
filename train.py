@@ -17,6 +17,14 @@ have_cuda = torch.cuda.is_available()
 epochs = 5
 
 # Creating Datasets
+"""
+In the paper there are 3 transforms listed:
+    1) Random Flip of Img Crop & Corresponding Label
+    2) Expand the bounding box between 10-20% (random)
+    3) Random selection of the starting vertex of the polygon annotation
+
+We may have to use the Lambda transforms
+"""
 transform = transforms.Compose([
     transforms.RandomCrop(224),
     transforms.RandomHorizontalFlip(),
@@ -50,21 +58,11 @@ def train(epoch):
     print("Training process has started")
     model.eval()
 
-    i = 1
     for _, data in tqdm(enumerate(train_loader)):
-        if i==1:
+        original_img = data[0].float()
+        original_img = Variable(original_img, volatile=True).cuda()
+        output = model(original_img)
 
-            original_img = data[0].float()
-            original_img = Variable(original_img, volatile=True).cuda()
-
-            output = model(original_img)
-            i=2
-        # use the follow method can't get the right image but I don't know why
-        # color_img = torch.from_numpy(color_img.transpose((0, 3, 1, 2)))
-        # sprite_img = make_grid(color_img)
-        # color_name = './colorimg/'+str(i)+'.jpg'
-        # save_image(sprite_img, color_name)
-        # i += 1
 # Train Process Pt.2/2
 for epoch in range(1, epochs + 1):
     print("Epoch: {}".format(epoch))
