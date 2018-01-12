@@ -18,7 +18,7 @@ transform = transforms.Compose([
     transforms.ToTensor()
 ])
 
-image_dir="../val"
+image_dir="../leftImg8bit/train"
 train_set = torchvision.datasets.ImageFolder(image_dir,transform)
 train_set_size = len(train_set)
 
@@ -27,8 +27,6 @@ train_loader = torch.utils.data.DataLoader(train_set, batch_size=32, shuffle=Tru
 vgg = models.vgg16(pretrained=True)
 vgg = nn.Sequential(*list(vgg.features.children())[:-1])
 model = PolygonRNN(vgg)
-
-
 
 def train(epoch):
     model.eval()
@@ -42,7 +40,6 @@ def train(epoch):
             original_img, scale_img = Variable(original_img, volatile=True), Variable(scale_img)
 
             output = model(original_img)
-            pdb.set_trace()
             i=2
         # use the follow method can't get the right image but I don't know why
         # color_img = torch.from_numpy(color_img.transpose((0, 3, 1, 2)))
