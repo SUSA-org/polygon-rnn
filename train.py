@@ -7,7 +7,11 @@ from torchvision import transforms,models
 import numpy as np
 import torch.nn as nn
 from model import PolygonRNN
+from tqdm import tqdm
+import time
 import pdb
+
+starttime = time.time()
 
 have_cuda = torch.cuda.is_available()
 epochs = 5
@@ -22,17 +26,23 @@ image_dir="../leftImg8bit/train"
 train_set = torchvision.datasets.ImageFolder(image_dir,transform)
 train_set_size = len(train_set)
 
-train_loader = torch.utils.data.DataLoader(train_set, batch_size=32, shuffle=True, num_workers=4)
+train_loader = torch.utils.data.DataLoader(train_set, batch_size=32, shuffle=True, num_workers=1)
 
 vgg = models.vgg16(pretrained=True)
 vgg = nn.Sequential(*list(vgg.features.children())[:-1])
 model = PolygonRNN(vgg)
+if have_cuda:
+    model.cuda()
+
+elapsed = time.time() - starttime
+print("About to train! Time elapsed: {}".format(elapsed))
 
 def train(epoch):
+    print("Training process has started")
     model.eval()
 
     i = 1
-    for _, data in enumerate(train_loader):
+    for _, data in tqdm(enumerate(train_loader)):
         if i==1:
 
             original_img = data[0].float()
@@ -48,4 +58,5 @@ def train(epoch):
         # save_image(sprite_img, color_name)
         # i += 1
 for epoch in range(1, epochs + 1):
+    print("Epoch: {}".format(epoch))
     train(epoch)
