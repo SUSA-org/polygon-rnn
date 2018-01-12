@@ -20,6 +20,7 @@ from convlstm import ConvLSTM
 #conv4_3:  28 x 28 x 512
 #conv5_3:  14 x 14 x 512
 #indices: 9,16,22,29
+
 class TruncatedVGG(nn.Module):
     def __init__(self,pretrainedModel,indices=[9,16,22,29]):
         super(TruncatedVGG, self).__init__()
