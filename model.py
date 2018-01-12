@@ -19,7 +19,7 @@ import torch.nn.functional as F
 class Model(nn.Module):
     def __init__(self,pretrainedModel,indices):
         super(Model, self).__init__()
-        self.model=pretrainedModel
+        self.model = pretrainedModel
         self.indices = indices
 
     def forward(self, x):
@@ -27,5 +27,23 @@ class Model(nn.Module):
         for i in range(len(self.model)):
             x=self.model[i](x)
             if i in self.indices:
-                output += x
+                output.append(x)
+            if i == len(self.model)-1 and i not in self.indices:
+                output.append(x)
+        return output
+
+class PolygonRnn(nn.Module):
+    def __init__(self,pretrainedModel,indices):
+        super(Model, self).__init__()
+        self.model = pretrainedModel
+        self.indices = indices
+
+    def forward(self, x):
+        output=[]
+        for i in range(len(self.model)):
+            x=self.model[i](x)
+            if i in self.indices:
+                output.append(x)
+            if i == len(self.model)-1 and i not in self.indices:
+                output.append(x)
         return output
