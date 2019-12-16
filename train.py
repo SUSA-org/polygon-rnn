@@ -26,9 +26,8 @@ In the paper there are 3 transforms listed:
     1) Random Flip of Img Crop & Corresponding Label
     2) Expand the bounding box between 10-20% (random)
     3) Random selection of the starting vertex of the polygon annotation
-
-We may have to use the Lambda transforms
 """
+
 transform = transforms.Compose([
     #transforms.Rescale(256),
     transforms.RandomCrop(224),
@@ -36,12 +35,10 @@ transform = transforms.Compose([
     transforms.ToTensor()
 ])
 image_dir="../val"
-#image_dir="../leftImg8bit/train"
 train_set = torchvision.datasets.ImageFolder(image_dir,transform)
 train_set_size = len(train_set)
 
 val_dir="../val"
-#val_dir = '.../leftImg8bit/val'
 val_set = torchvision.datasets.ImageFolder(val_dir,transform)
 val_set_size = len(val_set)
 

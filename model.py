@@ -1,6 +1,5 @@
 # Patrick Chao and Noah Gundotra
 # 1/11/18
-#   MACHINEEEE LEARNINGG
 
 import cv2
 import numpy as np
